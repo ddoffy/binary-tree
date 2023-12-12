@@ -137,6 +137,72 @@ int height(Node* root) {
     return depth;
 }
 
+void PrintCurrentLevel(Node* root, int level) {
+    if (root == NULL) return;
+    if (level == 1) {
+        cout << root->data << " ";
+        return;
+    }
+
+    PrintCurrentLevel(root->left, level - 1);
+    PrintCurrentLevel(root->right, level - 1);
+}
+
+void PrintLevelOrder(Node* root) {
+    int h = height(root);
+    for (int i = 1; i <= h; ++i) {
+        PrintCurrentLevel(root, i);
+        cout << endl;
+    }
+}
+
+void PrintGivenLevel(Node* root, int level, int ltr) {
+    if (root == NULL) return;
+
+    if (level == 1) {
+        cout << root->data << " ";
+        return;
+    }
+
+    if (ltr) {
+        PrintGivenLevel(root->left, level - 1, ltr);
+        PrintGivenLevel(root->right, level - 1, ltr);
+    } else {
+        PrintGivenLevel(root->right, level - 1, ltr);
+        PrintGivenLevel(root->left, level - 1, ltr);
+    }
+}
+
+void PrintSpiral(Node* root) {
+    int h = height(root);
+
+    bool ltr = false;
+    for (int i = 1; i <= h; ++i) {
+        PrintGivenLevel(root, i, ltr);
+        ltr = !ltr;
+    }
+}
+
+void RevertLevelOrder(Node* root) {
+    int h = height(root);
+    for (int i = h; i >= 1; --i) PrintGivenLevel(root, i, true);
+}
+
+
+void PreOrder(Node* root) {
+    if (root == NULL) return;
+    cout << root->data << " ";
+    PreOrder(root->left);
+    PreOrder(root->right);
+}
+
+void PostOrder(Node* root) {
+    if (root == NULL) return;
+    PreOrder(root->left);
+    PreOrder(root->right);
+    cout << root->data << " ";
+}
+
 int main(int argc, char** argv) {
     Node* root = NewNode(10);
     root->left = NewNode(11);
@@ -162,6 +228,30 @@ int main(int argc, char** argv) {
     cout << "Inorder traversal after deletion: ";
     inorder(root);
     cout << endl;
+
+    cout << "Height of tree with height is " << height(root) << endl;
+
+    cout << "Level Order Traversal: " << endl;
+    PrintLevelOrder(root);
+    cout << endl;
+    cout << "Spiral order traversal of binary tree is ";
+    PrintSpiral(root);
+    cout << endl;
+
+    cout << "Revert level order of binary tree is ";
+    RevertLevelOrder(root);
+
+    cout << endl;
+
+    cout << "Pre order ";
+    PreOrder(root);
+    cout << endl;
+
+    cout << "Post order ";
+    PostOrder(root);
+    cout << endl;
+
+    getchar();
 
     return 0;
 }
