@@ -51,41 +51,6 @@ Node* InsertNode(Node* root, int data) {
     return root;
 }
 
-void DeleteDeepest(Node* root, Node* d_node) {
-    queue<Node*> q;
-    q.push(root);
-
-    Node* temp;
-    while (!q.empty()) {
-        temp = q.front();
-        q.pop();
-
-        if (temp == d_node) {
-            temp = NULL;
-            delete (d_node);
-            return;
-        }
-
-        if (temp->right != NULL) {
-            if (temp->right == d_node) {
-                temp->right = NULL;
-                delete (d_node);
-                return;
-            } else
-                q.push(temp->right);
-        }
-
-        if (temp->left != NULL) {
-            if (temp->left == d_node) {
-                temp->left = NULL;
-                delete (d_node);
-                return;
-            } else
-                q.push(temp->left);
-        }
-    }
-}
-
 Node* Delete(Node* root, int data) {
     if (root == NULL) return NULL;
 
@@ -97,6 +62,7 @@ Node* Delete(Node* root, int data) {
     q.push(root);
 
     Node* temp;
+    Node* last;
     Node* data_node = NULL;
 
     while (!q.empty()) {
@@ -105,13 +71,23 @@ Node* Delete(Node* root, int data) {
 
         if (temp->data == data) data_node = temp;
 
-        if (temp->left != NULL) q.push(temp->left);
-        if (temp->right != NULL) q.push(temp->right);
+        if (temp->left != NULL) {
+            last = temp;
+            q.push(temp->left);
+        }
+        if (temp->right != NULL) {
+            last = temp;
+            q.push(temp->right);
+        }
     }
     if (data_node != NULL) {
-        int x = temp->data;
-        DeleteDeepest(root, temp);
-        data_node->data = x;
+        data_node->data = temp->data;
+
+        if (last->right == temp)
+            last->right = NULL;
+        else
+            last->left = NULL;
+        delete (temp);
     }
     return root;
 }
@@ -186,8 +162,6 @@ int main(int argc, char** argv) {
     cout << "Inorder traversal after deletion: ";
     inorder(root);
     cout << endl;
-
-
 
     return 0;
 }
