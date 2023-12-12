@@ -3,9 +3,9 @@
  */
 
 #include <bits/stdc++.h>
-using std::queue;
 using std::cout;
 using std::endl;
+using std::queue;
 
 struct Node {
     int data;
@@ -47,6 +47,71 @@ Node* InsertNode(Node* root, int data) {
             temp->right = NewNode(data);
             break;
         }
+    }
+    return root;
+}
+
+void DeleteDeepest(Node* root, Node* d_node) {
+    queue<Node*> q;
+    q.push(root);
+
+    Node* temp;
+    while (!q.empty()) {
+        temp = q.front();
+        q.pop();
+
+        if (temp == d_node) {
+            temp = NULL;
+            delete (d_node);
+            return;
+        }
+
+        if (temp->right != NULL) {
+            if (temp->right == d_node) {
+                temp->right = NULL;
+                delete (d_node);
+                return;
+            } else
+                q.push(temp->right);
+        }
+
+        if (temp->left != NULL) {
+            if (temp->left == d_node) {
+                temp->left = NULL;
+                delete (d_node);
+                return;
+            } else
+                q.push(temp->left);
+        }
+    }
+}
+
+Node* Delete(Node* root, int data) {
+    if (root == NULL) return NULL;
+
+    if (root->left == NULL && root->right == NULL) {
+        if (root->data == data) return NULL;
+        return root;
+    }
+    queue<Node*> q;
+    q.push(root);
+
+    Node* temp;
+    Node* data_node = NULL;
+
+    while (!q.empty()) {
+        temp = q.front();
+        q.pop();
+
+        if (temp->data == data) data_node = temp;
+
+        if (temp->left != NULL) q.push(temp->left);
+        if (temp->right != NULL) q.push(temp->right);
+    }
+    if (data_node != NULL) {
+        int x = temp->data;
+        DeleteDeepest(root, temp);
+        data_node->data = x;
     }
     return root;
 }
@@ -115,6 +180,14 @@ int main(int argc, char** argv) {
     cout << "Inorder traversal after insertion: ";
     inorder(root);
     cout << endl;
+
+    root = Delete(root, 11);
+
+    cout << "Inorder traversal after deletion: ";
+    inorder(root);
+    cout << endl;
+
+
 
     return 0;
 }
